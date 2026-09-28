@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  news_analyst:
+    build: .
+    container_name: ai_news_analyst_app
+    ports:
+      - "8501:8501"
+    environment:
+      - CHROMA_PERSIST_DIR=/app/data/chroma_db
+      - COLLECTION_NAME=news_knowledge_base
+      - EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

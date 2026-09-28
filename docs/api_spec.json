@@ -1,0 +1,117 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AI News Intelligence System API Spec",
+    "description": "API contract for news fetcher orchestration, vector knowledge base search, and grounded RAG query engine.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/orchestration/trigger": {
+      "post": {
+        "summary": "Trigger domain fetcher agents and processing pipeline",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["all", "Tech", "Finance", "Politics"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orchestration run completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "success" },
+                    "articles_fetched": { "type": "integer", "example": 45 },
+                    "chunks_stored": { "type": "integer", "example": 120 },
+                    "execution_time_sec": { "type": "number", "example": 4.12 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rag/query": {
+      "post": {
+        "summary": "Ask grounded question against vector knowledge base",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["question"],
+                "properties": {
+                  "question": { "type": "string", "example": "What did the RBI announce this week and how did markets react?" },
+                  "category": { "type": "string", "example": "Finance" },
+                  "start_date": { "type": "string", "example": "2026-09-21" },
+                  "end_date": { "type": "string", "example": "2026-09-28" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Grounded answer generated with source citations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "answer": { "type": "string" },
+                    "citations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "headline": { "type": "string" },
+                          "source": { "type": "string" },
+                          "url": { "type": "string" },
+                          "published_date": { "type": "string" }
+                        }
+                      }
+                    },
+                    "found_matches": { "type": "boolean" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/briefing": {
+      "get": {
+        "summary": "Retrieve daily summary briefing card across all domains",
+        "responses": {
+          "200": {
+            "description": "Daily briefing data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "date": { "type": "string", "example": "2026-09-28" },
+                    "tech_summary": { "type": "array", "items": { "type": "string" } },
+                    "finance_summary": { "type": "array", "items": { "type": "string" } },
+                    "politics_summary": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
